@@ -7,7 +7,9 @@ import com.main.task.payload.request.UserRequest;
 import com.main.task.payload.response.MessageResponse;
 import com.main.task.payload.response.SignInResponse;
 import com.main.task.payload.response.UserInfoResponse;
+import com.main.task.payload.response.UserResponse;
 import com.main.task.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +35,7 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/public/sign-in")
-    public ResponseEntity<?> signIn(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> signIn(@Valid @RequestBody LoginRequest request) {
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(
@@ -55,14 +57,13 @@ public class AuthController {
     }
 
     @PostMapping("/public/sign-up")
-    public ResponseEntity<?> signUp(@RequestBody UserRequest request) {
+    public ResponseEntity<?> signUp(@Valid @RequestBody UserRequest request) {
         if (userService.findByEmail(request.getEmail()).isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email is already in use!"));
         }
 
-        userService.createUser(request);
-
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        UserResponse response = userService.createUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body("User Registration successfully");
     }
 
 
@@ -71,6 +72,7 @@ public class AuthController {
         User user = userService.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        System.out.println(user.getFirstName());
         return ResponseEntity.ok(new UserInfoResponse(
                 user.getUserId().longValue(),
                 user.getFirstName(),

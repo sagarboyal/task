@@ -5,6 +5,7 @@ import com.main.task.payload.request.UserRequest;
 import com.main.task.payload.response.UserResponse;
 import com.main.task.repository.UserRepository;
 import com.main.task.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserResponse createUser(UserRequest request) {
+    public UserResponse createUser(@Valid UserRequest request) {
         User user = new User();
         user.setFirstName(request.getFirstname());
         user.setLastName(request.getLastname());

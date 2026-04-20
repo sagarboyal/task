@@ -3,6 +3,7 @@ package com.main.task.controller;
 import com.main.task.payload.request.ProductRequest;
 import com.main.task.payload.response.ProductResponse;
 import com.main.task.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductResponse> createProduct(@RequestBody ProductRequest productRequest,
+    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductRequest productRequest,
                                                          @AuthenticationPrincipal UserDetails userDetails){
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productRequest, userDetails));
     }
